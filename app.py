@@ -78,7 +78,7 @@ def error_402():
 
 @app.route("/403")
 def error_403():
-    return "403 Forbidden - Запрещено", 403
+    return "403 Forbidden - Запрощено", 403
 
 @app.route("/405")
 def error_405():
@@ -168,7 +168,7 @@ def author():
 def image():
     css_url = url_for('static', filename='lab1.css')
     path = url_for("static", filename="silent.jpg")
-    return '''
+    content = '''
 <!doctype html>
 <html>
     <head>
@@ -179,6 +179,14 @@ def image():
         <img src="''' + path + '''">
     </body>
 </html>'''
+    
+    # Возвращаем ответ с кастомными заголовками
+    return content, 200, {
+        'Content-Language': 'ru-RU',  # Язык контента - русский (Россия)
+        'X-Student-Name': 'Alyoshkina Varvara',  # Кастомный заголовок с именем студента
+        'X-Lab-Number': '1',  # Кастомный заголовок с номером лабораторной
+        'X-Server-Technology': 'Flask Python Framework'  # Кастомный заголовок с технологией
+    }
 
 count = 0
 
@@ -190,7 +198,7 @@ def counter():
     url = request.url
     client_ip = request.remote_addr
     return '''
-<!doceptype html>
+<!doctype html>
 <html>
     <body>
         Сколько раз вы сюда заходили: ''' + str(count) + '''
