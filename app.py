@@ -126,12 +126,31 @@ def lab1():
     </head>
     <body>
         <h1>Лабораторная 1</h1>
-        <p>Flask — фреймворк для создания веб-приложений на языке
+        <p>Flask — фреймфорк для создания веб-приложений на языке
 программирования Python, использующий набор инструментов
 Werkzeug, а также шаблонизатор Jinja2. Относится к категории так
 называемых микрофреймворков — минималистичных каркасов
 веб-приложений, сознательно предоставляющих лишь самые базовые возможности.</p>
         <a href="/">На главную</a>
+        
+        <h2>Список роутов</h2>
+        <ul>
+            <li><a href="/lab1/web">/lab1/web</a> - Web сервер</li>
+            <li><a href="/lab1/author">/lab1/author</a> - Информация об авторе</li>
+            <li><a href="/lab1/image">/lab1/image</a> - Изображение со стилями</li>
+            <li><a href="/lab1/counter">/lab1/counter</a> - Счетчик посещений</li>
+            <li><a href="/lab1/counter/clear">/lab1/counter/clear</a> - Очистка счетчика</li>
+            <li><a href="/lab1/info">/lab1/info</a> - Перенаправление на автора</li>
+            <li><a href="/lab1/created">/lab1/created</a> - Страница создания (201)</li>
+            <li><a href="/lab1/error">/lab1/error</a> - Вызов ошибки сервера</li>
+            <li><a href="/400">/400</a> - Bad Request</li>
+            <li><a href="/401">/401</a> - Unauthorized</li>
+            <li><a href="/402">/402</a> - Payment Required</li>
+            <li><a href="/403">/403</a> - Forbidden</li>
+            <li><a href="/405">/405</a> - Method Not Allowed</li>
+            <li><a href="/418">/418</a> - I'm a teapot</li>
+            <li><a href="/404">/404</a> - Not found</li>
+        </ul>
     </body>
 </html>'''
 
