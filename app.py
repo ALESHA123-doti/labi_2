@@ -1,6 +1,7 @@
 from flask import Flask, url_for, request, redirect
 import datetime
 app = Flask(__name__)
+
 @app.errorhandler(404)
 def not_found(err):
     return "нет такой страницы", 404
@@ -69,8 +70,15 @@ def counter():
         Дата и время: ''' + time + '''<br>
         Запрошенный адрес: ''' + url + '''<br>
         Ваш IP-адрес: ''' + client_ip + '''<br>
+        <a href="/counter/clear">Очистить счётчик</a>
     </body>
 </html>'''
+
+@app.route('/counter/clear')
+def clear_counter():
+    global count
+    count = 0
+    return redirect('/counter')
 
 @app.route("/info")
 def info():
