@@ -1,10 +1,53 @@
 from flask import Flask, url_for, request, redirect
 import datetime
+from werkzeug.exceptions import HTTPException
 app = Flask(__name__)
 
 @app.errorhandler(404)
 def not_found(err):
     return "нет такой страницы", 404
+
+# Обычные обработчики для стандартных ошибок
+@app.errorhandler(400)
+def bad_request(err):
+    return "400 Bad Request - Неверный запрос", 400
+
+@app.errorhandler(401)
+def unauthorized(err):
+    return "401 Unauthorized - Неавторизован", 401
+
+@app.errorhandler(403)
+def forbidden(err):
+    return "403 Forbidden - Запрещено", 403
+
+@app.errorhandler(405)
+def method_not_allowed(err):
+    return "405 Method Not Allowed - Метод не разрешен", 405
+
+# Для нестандартных кодов используем обычные роуты
+@app.route("/400")
+def error_400():
+    return "400 Bad Request - Неверный запрос", 400
+
+@app.route("/401")
+def error_401():
+    return "401 Unauthorized - Неавторизован", 401
+
+@app.route("/402")
+def error_402():
+    return "402 Payment Required - Необходима оплата", 402
+
+@app.route("/403")
+def error_403():
+    return "403 Forbidden - Запрещено", 403
+
+@app.route("/405")
+def error_405():
+    return "405 Method Not Allowed - Метод не разрешен", 405
+
+@app.route("/418")
+def error_418():
+    return "418 I'm a teapot - Я чайник", 418
 
 @app.route("/")
 @app.route("/index")
@@ -29,7 +72,7 @@ def index():
 
         <footer>
             <hr>
-            <p>Алёшкина Варвара Максимовна, ФБИ-34, 3 курс, 2023</p>
+            <p>Алёшкина Варвара Максимовна, ФБИ-34, 3 курс, 2025</p>
         </footer>
     </body>
 </html>'''
