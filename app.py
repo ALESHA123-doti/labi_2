@@ -5,7 +5,46 @@ app = Flask(__name__)
 
 @app.errorhandler(404)
 def not_found(err):
-    return "нет такой страницы", 404
+    css_url = url_for('static', filename='lab1.css')
+    return f'''<!doctype html>
+<html>
+    <head>
+        <title>Страница не найдена</title>
+        <link rel="stylesheet" href="{css_url}">
+    </head>
+    <body>
+        <h1>404 - Страница потерялась в тишине</h1>
+        <p>К сожалению, запрашиваемая страница не найдена.</p>
+        <p>Возможно, она переехала или никогда не существовала.</p>
+        <img src="{url_for('static', filename='ppp.jpg')}" alt="Тишина">
+        <br>
+        <a href="/">Вернуться на главную</a>
+    </body>
+</html>''', 404
+
+@app.errorhandler(500)
+def internal_server_error(err):
+    css_url = url_for('static', filename='lab1.css')
+    return f'''<!doctype html>
+<html>
+    <head>
+        <title>Ошибка сервера</title>
+        <link rel="stylesheet" href="{css_url}">
+    </head>
+    <body>
+        <h1>500 - Внутренняя ошибка сервера</h1>
+        <p>На сервере произошла непредвиденная ошибка.</p>
+        <p>Пожалуйста, попробуйте позже или обратитесь к администратору.</p>
+        <br>
+        <a href="/">Вернуться на главную</a>
+    </body>
+</html>''', 500
+
+# Роут для вызова ошибки сервера
+@app.route("/lab1/error")
+def cause_error():
+    # Вызываем ошибку деления на ноль
+    result = 1 / 0
 
 # Обычные обработчики для стандартных ошибок
 @app.errorhandler(400)
@@ -66,6 +105,7 @@ def index():
             <nav>
                 <ul>
                     <li><a href="/lab1">Первая лабораторная</a></li>
+                    <li><a href="/lab1/error">Вызвать ошибку сервера</a></li>
                 </ul>
             </nav>
         </main>
@@ -150,7 +190,7 @@ def counter():
     url = request.url
     client_ip = request.remote_addr
     return '''
-<!doctype html>
+<!doceptype html>
 <html>
     <body>
         Сколько раз вы сюда заходили: ''' + str(count) + '''
