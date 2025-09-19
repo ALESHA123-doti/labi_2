@@ -105,7 +105,6 @@ def index():
             <nav>
                 <ul>
                     <li><a href="/lab1">Первая лабораторная</a></li>
-                    <li><a href="/lab1/error">Вызвать ошибку сервера</a></li>
                 </ul>
             </nav>
         </main>
