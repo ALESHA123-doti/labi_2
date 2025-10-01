@@ -271,6 +271,9 @@ def add_flower(name):
     return f'''
 <!doctype html>
 <html>
+    <header>
+    WEB-программирование, часть 2. Лабораторная работа 2
+    </header>
     <body>
     <h1> Добавлен цветок </h1>
     <p> Название нового цветка:  {name} </p>
@@ -287,7 +290,7 @@ def example():
     course = 3
     year = 2025
     return render_template('example.html', 
-                         name=name, 
+                         name=name
                          lab_num=lab_num,
                          group=group,
                          course=course,
