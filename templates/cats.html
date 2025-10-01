@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Котики мира</title>
+    <style>
+            .cat-image {
+            width: 100%;
+            height: 600px;      
+            object-fit: cover;     
+            object-position: center; 
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+             .cat-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Котики мира — 20 пород</h1>
+
+    <div class="cat-grid">
+        {% for cat in cats %}
+        <div class="cat-card">
+            <div class="cat-name">{{ cat.name }}</div>
+            <div class="cat-desc">{{ cat.description }}</div>
+            <img class="cat-image" src="{{ url_for('static', filename='cats/' + cat.image) }}" alt="{{ cat.name }}">
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="/lab2/" class="back-link"> Назад в лабораторную 2</a>
+</body>
+</html>
