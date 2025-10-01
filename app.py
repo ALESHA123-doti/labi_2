@@ -395,3 +395,23 @@ def calc_default():
 @app.route('/lab2/calc/<int:a>')
 def calc_with_one_param(a):
     return redirect(f'/lab2/calc/{a}/1')
+
+# Список книг
+books = [
+    {"author": "Фёдор Достоевский", "title": "Преступление и наказание", "genre": "Роман", "pages": 672},
+    {"author": "Лев Толстой", "title": "Война и мир", "genre": "Роман-эпопея", "pages": 1225},
+    {"author": "Антуан де Сент-Экзюпери", "title": "Маленький принц", "genre": "Философская сказка", "pages": 96},
+    {"author": "Джордж Оруэлл", "title": "1984", "genre": "Антиутопия", "pages": 328},
+    {"author": "Рэй Брэдбери", "title": "451 градус по Фаренгейту", "genre": "Антиутопия", "pages": 256},
+    {"author": "Габриэль Гарсиа Маркес", "title": "Сто лет одиночества", "genre": "Магический реализм", "pages": 416},
+    {"author": "Михаил Булгаков", "title": "Мастер и Маргарита", "genre": "Фантастика, сатира", "pages": 448},
+    {"author": "Джейн Остин", "title": "Гордость и предубеждение", "genre": "Роман", "pages": 432},
+    {"author": "Харпер Ли", "title": "Убить пересмешника", "genre": "Драма", "pages": 324},
+    {"author": "Эрнест Хемингуэй", "title": "Старик и море", "genre": "Повесть", "pages": 128},
+    {"author": "Агата Кристи", "title": "Убийство в Восточном экспрессе", "genre": "Детектив", "pages": 256},
+    {"author": "Виктор Пелевин", "title": "Чапаев и Пустота", "genre": "Постмодернизм", "pages": 352}
+]
+
+@app.route('/lab2/books')
+def books_list():
+    return render_template('books.html', books=books)

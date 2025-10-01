@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Список книг</title>
+</head>
+<body>
+    <h1>Список книг</h1>
+
+    {% for book in books %}
+    <div class="book">
+        <h2>{{ book.title }}</h2>
+        <div class="info">
+            <div><strong>Автор:</strong> {{ book.author }}</div>
+            <div><strong>Жанр:</strong> {{ book.genre }}</div>
+            <div><strong>Количество страниц:</strong> {{ book.pages }}</div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="back">
+        <a href="/lab2/">Назад в лабораторную 2</a>
+    </div>
+</body>
+</html>
