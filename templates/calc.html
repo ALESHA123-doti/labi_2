@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <title>Калькулятор</title>
+</head>
+<body>
+    <h1>Калькулятор</h1>
+    <p>Числа: {{ a }} и {{ b }}</p>
+
+    <ul class="operations">
+        <li><strong>Сумма:</strong> {{ a + b }}</li>
+        <li><strong>Разность:</strong> {{ a - b }}</li>
+        <li><strong>Произведение:</strong> {{ a * b }}</li>
+        <li><strong>Частное:</strong> 
+            {% if b != 0 %}
+                {{ a / b }}
+            {% else %}
+                <span style="color: red;">Ошибка: деление на ноль!</span>
+            {% endif %}
+        </li>
+        <li><strong>Возведение в степень:</strong> {{ a ** b }}</li>
+    </ul>
+
+    <div class="result">
+        <a href="/lab2/">Назад в лабораторную 2</a>
+    </div>
+</body>
+</html>
