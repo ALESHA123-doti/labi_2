@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <title>Котики мира</title>
     <style>
             .cat-image {
@@ -15,7 +16,7 @@
              .cat-name {
             font-size: 1.3em;
             font-weight: bold;
-            color: #2c3e50;
+            color: #ffb1f2;
             margin: 0 0 10px 0;
         }
     </style>
@@ -33,6 +34,7 @@
         {% endfor %}
     </div>
 
-    <a href="/lab2/" class="back-link"> Назад в лабораторную 2</a>
+    <br>
+    <a href="/lab2/">← Назад в лабораторную 2</a>
 </body>
 </html>

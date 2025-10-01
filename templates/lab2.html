@@ -1,21 +1,22 @@
 {% extends "base.html" %}
 
-{% block lab %}Лабораторная работа 2{% endblock %} 
+{% block title %}Лабораторная 2{% endblock %}
 
 {% block main %}
 <h1>Шаблоны</h1>
-<div>Тема лабораторной - шаблоны. Список сделанных страниц:</div>
-<ol>
-    <li>
-        <a href="/lab2/example">example</a>
-    </li>
-</ol>
-{% endblock %} 
+<div>Тема лабораторной - шаблоны.</div>
 
-<h2>Работа с цветами</h2>
+<h2>Роуты второй лабораторной:</h2>
 <ul>
-    <li>Добавить цветок: <code>/lab2/add_flower/<имя></code></li>
-    <li>Посмотреть цветок по ID: <code>/lab2/flowers/<id></code></li>
+    <li><a href="/lab2/example">Пример данных (фрукты)</a></li>
+    <li><a href="/lab2/filters">Фильтры Jinja2</a></li>
+    <li><a href="/lab2/calc/">Калькулятор (математические операции)</a></li>
+    <li><a href="/lab2/books">Список книг (12 книг)</a></li>
+    <li><a href="/lab2/cats">Котики мира (20+ пород)</a></li>
+    <li><a href="/lab2/all_flowers">Все цветы</a></li>
+    <li><a href="/lab2/add_flower/роза">Добавить цветок (пример)</a></li>
     <li><a href="/lab2/clear_flowers">Очистить список цветов</a></li>
+    <li><a href="/lab2/flowers/0">Просмотр цветка по ID (пример: ID=0)</a></li>
 </ul>
+<a href="/index">На главную</a>
 {% endblock %}

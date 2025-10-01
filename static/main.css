@@ -12,6 +12,29 @@ body {
     position: relative;
 }
 
+/* Уменьшаем размер заголовков */
+h1 {
+    font-size: 28px; /* было ~32–36px по умолчанию — теперь меньше */
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+h2 {
+    font-size: 22px; /* было ~24–28px — теперь скромнее */
+    margin: 20px 0 12px 0;
+}
+
+/* Делаем ссылки светлыми и подчёркнутыми для лучшей видимости */
+a {
+    color: #c0e0c0; /* светло-зелёный, хорошо читается на тёмном фоне */
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #ffb6c1; /* при наведении — розовый акцент */
+    text-decoration: none;
+}
+
 header {
     background-color: #3a5a4a;
     color: #ffb6c1;

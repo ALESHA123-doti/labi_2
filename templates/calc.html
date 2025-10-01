@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Калькулятор</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 </head>
 <body>
     <h1>Калькулятор</h1>
@@ -21,8 +22,7 @@
         <li><strong>Возведение в степень:</strong> {{ a ** b }}</li>
     </ul>
 
-    <div class="result">
-        <a href="/lab2/">Назад в лабораторную 2</a>
-    </div>
+    <br>
+    <a href="/lab2/">Назад в лабораторную 2</a>
 </body>
 </html>
