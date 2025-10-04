@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, request
+from flask import Blueprint, url_for, request, render_template
 import datetime
 from werkzeug.exceptions import HTTPException
 lab2 = Blueprint('lab2', __name__)
