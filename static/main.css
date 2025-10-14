@@ -78,3 +78,8 @@ sup {
 .footer-accent {
     color: #ffb6c1;
 }
+
+.error {
+    color: #ff6b6b; 
+    font-weight: bold;
+}
