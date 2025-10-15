@@ -115,6 +115,15 @@ def settings():
         font_style=font_style
     )
 
+@lab3.route('/lab3/settings/clear')
+def clear_settings():
+    resp = make_response(redirect('/lab3/settings'))
+    resp.delete_cookie('color')
+    resp.delete_cookie('bg_color')
+    resp.delete_cookie('font_size')
+    resp.delete_cookie('font_style')
+    return resp
+
 @lab3.route('/lab3/ticket')
 def ticket_form():
     errors = {}
