@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lab1/main.css') }}">
+    <title>Ваш билет</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+        .ticket { border: 2px solid #660044; padding: 20px; border-radius: 10px; background: #ff06a4; }
+        h2 { color: #66004d; text-align: center; }
+        .info { margin: 10px 0; }
+        .price { font-size: 1.2em; font-weight: bold; color: rgb(19, 88, 0); text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <h2>Железнодорожный билет</h2>
+        <div class="info"><strong>Тип билета:</strong> {{ ticket_type }}</div>
+        <div class="info"><strong>ФИО:</strong> {{ fio }}</div>
+        <div class="info"><strong>Возраст:</strong> {{ age }} лет</div>
+        <div class="info"><strong>Маршрут:</strong> {{ departure }} → {{ destination }}</div>
+        <div class="info"><strong>Дата поездки:</strong> {{ travel_date }}</div>
+        
+        <div class="info"><strong>Полка:</strong> 
+            {% if berth == 'upper' %}Верхняя
+            {% elif berth == 'lower' %}Нижняя
+            {% elif berth == 'side_upper' %}Верхняя боковая
+            {% elif berth == 'side_lower' %}Нижняя боковая
+            {% endif %}
+        </div>
+
+        <div class="info"><strong>Бельё:</strong> {{ 'Да' if bedding else 'Нет' }}</div>
+        <div class="info"><strong>Багаж:</strong> {{ 'Да' if baggage else 'Нет' }}</div>
+        <div class="info"><strong>Страховка:</strong> {{ 'Да' if insurance else 'Нет' }}</div>
+
+        <div class="price">Итого к оплате: {{ price }} руб.</div>
+    </div>
+</body>
+</html>

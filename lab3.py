@@ -114,3 +114,92 @@ def settings():
         font_size=font_size,
         font_style=font_style
     )
+
+@lab3.route('/lab3/ticket')
+def ticket_form():
+    errors = {}
+    # Получаем данные из GET-параметров (если форма уже отправлялась)
+    fio = request.args.get('fio', '').strip()
+    berth = request.args.get('berth')
+    bedding = request.args.get('bedding') == 'on'
+    baggage = request.args.get('baggage') == 'on'
+    age_str = request.args.get('age', '').strip()
+    departure = request.args.get('departure', '').strip()
+    destination = request.args.get('destination', '').strip()
+    travel_date = request.args.get('travel_date')
+    insurance = request.args.get('insurance') == 'on'
+
+    # Валидация
+    if not fio:
+        errors['fio'] = 'Введите ФИО пассажира'
+    if not berth:
+        errors['berth'] = 'Выберите полку'
+    if not age_str:
+        errors['age'] = 'Укажите возраст'
+    else:
+        try:
+            age = int(age_str)
+            if age < 1 or age > 120:
+                errors['age'] = 'Возраст должен быть от 1 до 120 лет'
+            else:
+                # Сохраняем корректный возраст для расчёта
+                pass
+        except ValueError:
+            errors['age'] = 'Возраст должен быть числом'
+            age = None
+    if not departure:
+        errors['departure'] = 'Укажите пункт выезда'
+    if not destination:
+        errors['destination'] = 'Укажите пункт назначения'
+    if not travel_date:
+        errors['travel_date'] = 'Выберите дату поездки'
+
+    # Если есть ошибки — возвращаем форму с подсветкой
+    if errors:
+        return render_template(
+            'lab3/ticket_form.html',
+            fio=fio,
+            berth=berth,
+            bedding=bedding,
+            baggage=baggage,
+            age=age_str,
+            departure=departure,
+            destination=destination,
+            travel_date=travel_date,
+            insurance=insurance,
+            errors=errors
+        )
+
+    # Если всё в порядке — рассчитываем билет
+    age = int(age_str)
+    is_child = age < 18
+    base_price = 700 if is_child else 1000
+
+    # Доплаты
+    price = base_price
+    if berth in ['lower', 'side_lower']:
+        price += 100
+    if bedding:
+        price += 75
+    if baggage:
+        price += 250
+    if insurance:
+        price += 150
+
+    ticket_type = "Детский билет" if is_child else "Взрослый билет"
+
+    # Передаём данные в шаблон билета
+    return render_template(
+        'lab3/ticket.html',
+        fio=fio,
+        berth=berth,
+        bedding=bedding,
+        baggage=baggage,
+        age=age,
+        departure=departure,
+        destination=destination,
+        travel_date=travel_date,
+        insurance=insurance,
+        price=price,
+        ticket_type=ticket_type
+    )

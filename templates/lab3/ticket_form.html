@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lab1/main.css') }}">
+    <title>Форма покупки билета</title>
+    <style>
+        .error { color: rgb(255, 152, 226); font-size: 0.9em; }
+        label { display: block; margin: 10px 0 5px; }
+        input, select { margin-bottom: 10px; padding: 5px; }
+        .checkbox-group { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h2>Покупка железнодорожного билета</h2>
+    <form method="get" action="/lab3/ticket">
+        <label>ФИО пассажира:
+            <input type="text" name="fio" value="{{ fio or '' }}">
+        </label>
+        {% if errors.fio %}<div class="error">{{ errors.fio }}</div>{% endif %}
+
+        <label>Полка:
+            <select name="berth">
+                <option value="">-- Выберите --</option>
+                <option value="upper" {% if berth == 'upper' %}selected{% endif %}>Верхняя</option>
+                <option value="lower" {% if berth == 'lower' %}selected{% endif %}>Нижняя</option>
+                <option value="side_upper" {% if berth == 'side_upper' %}selected{% endif %}>Верхняя боковая</option>
+                <option value="side_lower" {% if berth == 'side_lower' %}selected{% endif %}>Нижняя боковая</option>
+            </select>
+        </label>
+        {% if errors.berth %}<div class="error">{{ errors.berth }}</div>{% endif %}
+
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="bedding" {% if bedding %}checked{% endif %}> С бельём
+            </label>
+        </div>
+
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="baggage" {% if baggage %}checked{% endif %}> С багажом
+            </label>
+        </div>
+
+        <label>Возраст:
+            <input type="number" name="age" min="1" max="120" value="{{ age or '' }}">
+        </label>
+        {% if errors.age %}<div class="error">{{ errors.age }}</div>{% endif %}
+
+        <label>Пункт выезда:
+            <input type="text" name="departure" value="{{ departure or '' }}">
+        </label>
+        {% if errors.departure %}<div class="error">{{ errors.departure }}</div>{% endif %}
+
+        <label>Пункт назначения:
+            <input type="text" name="destination" value="{{ destination or '' }}">
+        </label>
+        {% if errors.destination %}<div class="error">{{ errors.destination }}</div>{% endif %}
+
+        <label>Дата поездки:
+            <input type="date" name="travel_date" value="{{ travel_date or '' }}">
+        </label>
+        {% if errors.travel_date %}<div class="error">{{ errors.travel_date }}</div>{% endif %}
+
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="insurance" {% if insurance %}checked{% endif %}> Нужна страховка
+            </label>
+        </div>
+
+        <button type="submit">Оформить билет</button>
+    </form>
+</body>
+</html>
