@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <h1>Настройки внешнего вида</h1>
+    <form method="get">
+        <div>
+            <label for="color">Выберите цвет текста:</label>
+            <input type="color" id="color" name="color" value="{{ color }}">
+        </div>
+
+        <div>
+            <label for="bg_color">Выберите цвет фона:</label>
+            <input type="color" id="bg_color" name="bg_color" value="{{ bg_color }}">
+        </div>
+
+        <div>
+            <label for="font_size">Выберите размер шрифта (px):</label>
+            <input type="number" id="font_size" name="font_size" value="{{ font_size }}" min="10" max="48">
+        </div>
+
+        <div>
+            <label>Стиль шрифта:</label><br>
+            <label>
+                <input type="radio" name="font_style" value="normal" {% if font_style == 'normal' %}checked{% endif %}>
+                Обычный
+            </label><br>
+            <label>
+                <input type="radio" name="font_style" value="italic" {% if font_style == 'italic' %}checked{% endif %}>
+                Курсив
+            </label>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <button type="submit">Применить</button>
+        </div>
+    </form>
+{% endblock %}

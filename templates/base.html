@@ -6,10 +6,18 @@
     <title>Алёшкина Варя. {% block lab %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        body {
+            color: {{ request.cookies.get('color', '#000000') }};
+            background-color: {{ request.cookies.get('bg_color', '#ffffff') }};
+            font-size: {{ request.cookies.get('font_size', '16') }}px;
+            font-style: {{ request.cookies.get('font_style', 'normal') }};
+        }
+    </style>
 </head>
 <body>
     <header>
-        <a href="/lab2/"></a>
+        <a href="/lab3/"></a>
         <h1>WEB-программирование, часть 2. {{ self.lab() }}</h1>
     </header>
 
