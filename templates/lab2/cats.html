@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lab1/main.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <title>Котики мира</title>
     <style>
@@ -30,7 +30,7 @@
         <div class="cat-card">
             <div class="cat-name">{{ cat.name }}</div>
             <div class="cat-desc">{{ cat.description }}</div>
-            <img class="cat-image" src="{{ url_for('static', filename='cats/' + cat.image) }}" alt="{{ cat.name }}">
+            <img class="cat-image" src="{{ url_for('static', filename='lab2/cats/' + cat.image) }}" alt="{{ cat.name }}">
         </div>
         {% endfor %}
     </div>

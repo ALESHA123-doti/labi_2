@@ -1,9 +1,10 @@
 <!doctype html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>Калькулятор</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lab1/main.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
     <h1>Калькулятор</h1>
@@ -20,7 +21,15 @@
                 <span style="color: red;">Ошибка: деление на ноль!</span>
             {% endif %}
         </li>
-        <li><strong>Возведение в степень:</strong> {{ a ** b }}</li>
+        <li><strong>Возведение в степень:</strong> 
+            {% if a == 0 and b <= 0 %}
+                <span style="color: red;">Ошибка: невозможно возвести 0 в неположительную степень!</span>
+            {% elif a < 0 and b != b|int %} 
+                <span style="color: red;">Ошибка: отрицательное число в дробной степени!</span>
+            {% else %}
+                {{ a ** b }}
+            {% endif %}
+        </li>
     </ul>
 
     <br>

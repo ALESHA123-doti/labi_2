@@ -19,10 +19,9 @@ flower_list = ['роза', 'тюльпан', 'незабудка', 'ромашк
 def add_flower_no_name():
     abort(400, description="вы не задали имя цветка")
 
-# --- СТАРЫЙ: добавление цветка с именем
 @lab2.route('/lab2/add_flower/<name>')
 def add_flower(name):
-    flower_list.lab2end(name)
+    flower_list.append(name)  
     return f'''
 <!doctype html>
 <html>
@@ -63,10 +62,9 @@ def all_flowers():
 </html>
 '''
 
-# --- УЛУЧШЕННЫЙ: просмотр одного цветка по ID 
 @lab2.route('/lab2/flowers/<int:flower_id>')
 def flowers(flower_id):
-    if flower_id >= len(flower_list):
+    if flower_id < 0 or flower_id >= len(flower_list):
         abort(404)
     flower_name = flower_list[flower_id]
     return f'''
@@ -122,7 +120,7 @@ def example():
     {'name': 'мандарины', 'price': 95},
     {'name': 'манго', 'price': 321}
     ]
-    return render_template('example.html',
+    return render_template('lab2/example.html',
                            name=name, lab_num=lab_num, group=group,
                            course=course, fruits=fruits)
 
@@ -133,23 +131,13 @@ def lab():
 @lab2.route('/lab2/filters')
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
-    return render_template('filter.html', phrase=phrase)
+    return render_template('lab2/filter.html', phrase=phrase)
 
-# --- МАТЕМАТИЧЕСКИЙ КАЛЬКУЛЯТОР
-
-@lab2.route('/lab2/calc/<int:a>/<int:b>')
-def calc(a, b):
-    return render_template('calc.html', a=a, b=b)
-
-# Редирект: /lab2/calc/ -> /lab2/calc/1/1
 @lab2.route('/lab2/calc/')
-def calc_default():
-    return redirect('/lab2/calc/1/1')
-
-# Редирект: /lab2/calc/<a> -> /lab2/calc/a/1
-@lab2.route('/lab2/calc/<int:a>')
-def calc_with_one_param(a):
-    return redirect(f'/lab2/calc/{a}/1')
+@lab2.route('/lab2/calc/<int:a>/')
+@lab2.route('/lab2/calc/<int:a>/<int:b>')
+def calc(a=1, b=1):
+    return render_template('lab2/calc.html', a=a, b=b)
 
 # Список книг
 books = [
@@ -169,7 +157,7 @@ books = [
 
 @lab2.route('/lab2/books')
 def books_list():
-    return render_template('books.html', books=books)
+    return render_template('lab2/books.html', books=books)
 
 # Список котиков 
 cats = [
@@ -278,4 +266,4 @@ cats = [
 
 @lab2.route('/lab2/cats')
 def cats_list():
-    return render_template('cats.html', cats=cats)
+    return render_template('lab2/cats.html', cats=cats)

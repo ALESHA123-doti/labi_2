@@ -12,7 +12,9 @@ app.register_blueprint(lab3)
 
 @app.errorhandler(404)
 def not_found(err):
-    css_url = url_for('static', filename='lab1.css')
+    css_url = url_for('static', filename='lab1/lab1.css')
+    img_url = url_for('static', filename='lab1/ppp.jpg')  
+    home_url = url_for('index')  
     return f'''<!doctype html>
 <html>
     <head>
@@ -23,15 +25,15 @@ def not_found(err):
         <h1>404 - Страница потерялась в тишине</h1>
         <p>К сожалению, запрашиваемая страница не найдена.</p>
         <p>Возможно, она переехала или никогда не существовала.</p>
-        <img src="{url_for('static', filename='ppp.jpg')}" alt="Тишина">
+        <img src="{img_url}" alt="Тишина">
         <br>
-        <a href="/">Вернуться на главную</a>
+        <a href="{home_url}">Вернуться на главную</a>
     </body>
 </html>''', 404
 
 @app.errorhandler(500)
 def internal_server_error(err):
-    css_url = url_for('static', filename='lab1.css')
+    css_url = url_for('static', filename='lab1/lab1.css')
     return f'''<!doctype html>
 <html>
     <head>
