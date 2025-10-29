@@ -6,28 +6,45 @@
 
 {% block main %}
     {% if authorized %}
-        <h1>Добро пожаловать, {{ login }}!</h1>
+        <h1>Добро пожаловать, {{ user_name }}!</h1>
         <div>
             <form action="/lab4/logout" method="post">
                 <button>Выход</button>
             </form>
         </div>
     {% else %}
-        <h1>Вход</h1>
-        <h2>Пожалуйста, авторизуйтесь</h2>
+        <h1>Вход / Регистрация</h1>
+        <h2>Введите данные</h2>
         <form method="post">
             <div>
-                <label for="login">Пользователь:</label>
-                <input type="text" id="login" name="login">
+                <label for="login">Логин (никнейм):</label>
+                <input type="text" id="login" name="login" value="{{ login or '' }}" required>
             </div>
             <div>
                 <label for="password">Пароль:</label>
-                <input type="password" id="password" name="password">
+                <input type="password" id="password" name="password" required>
             </div>
-            <div>{{ error }}</div>
             <div>
-                <button type="submit">Войти</button>
-                <button type="reset">Отмена</button>
+                <label for="name">Ваше имя (ФИО):</label>
+                <input type="text" id="name" name="name" value="{{ name or '' }}" required>
+            </div>
+            <div>
+                <label>Пол:</label><br>
+                <input type="radio" id="male" name="gender" value="male" {% if gender == 'male' %}checked{% endif %}>
+                <label for="male">Мужской</label>
+                <input type="radio" id="female" name="gender" value="female" {% if gender == 'female' %}checked{% endif %}>
+                <label for="female">Женский</label>
+            </div>
+
+            {% if error %}
+                <div style="color: red; font-weight: bold; margin: 10px 0;">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <div>
+                <button type="submit">Войти / Зарегистрироваться</button>
+                <button type="reset">Очистить</button>
             </div>
         </form>
     {% endif %}
