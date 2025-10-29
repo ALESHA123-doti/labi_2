@@ -102,8 +102,8 @@ def settings():
         return resp
 
     # Иначе — читаем текущие настройки из кук и отображаем форму
-    color = request.cookies.get('color', '#000000')
-    bg_color = request.cookies.get('bg_color', '#ffffff')
+    color = request.cookies.get('color', '#D6FFC7')
+    bg_color = request.cookies.get('bg_color', '#2D4939')
     font_size = request.cookies.get('font_size', '16')
     font_style = request.cookies.get('font_style', 'normal')
 
