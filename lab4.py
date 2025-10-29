@@ -250,3 +250,70 @@ def fridge():
         snowflakes=snowflakes,
         temperature=temperature
     )
+
+@lab4.route('/lab4/grain/', methods=['GET', 'POST'])
+def grain():
+    grain_types = {
+        'barley': {'name': 'ячмень', 'price': 12000},
+        'oats': {'name': 'овёс', 'price': 8500},
+        'wheat': {'name': 'пшеница', 'price': 9000},
+        'rye': {'name': 'рожь', 'price': 15000}
+    }
+
+    if request.method == 'GET':
+        return render_template('lab4/grain.html', grain_types=grain_types)
+
+    # Получаем данные из формы
+    grain_key = request.form.get('grain')
+    weight_str = request.form.get('weight')
+
+    # Проверка: выбрано ли зерно
+    if not grain_key or grain_key not in grain_types:
+        error = "Не выбран тип зерна"
+        return render_template('lab4/grain.html', grain_types=grain_types, error=error)
+
+    # Проверка: указан ли вес
+    if not weight_str:
+        error = "Не указан вес"
+        return render_template('lab4/grain.html', grain_types=grain_types, error=error)
+
+    # Преобразование веса
+    try:
+        weight = float(weight_str)
+    except ValueError:
+        error = "Вес должен быть числом"
+        return render_template('lab4/grain.html', grain_types=grain_types, error=error)
+
+    # Проверка: вес > 0
+    if weight <= 0:
+        error = "Вес должен быть больше 0"
+        return render_template('lab4/grain.html', grain_types=grain_types, error=error)
+
+    # Проверка: наличие (более 100 тонн — нет в наличии)
+    if weight > 100:
+        error = "Такого объёма сейчас нет в наличии"
+        return render_template('lab4/grain.html', grain_types=grain_types, error=error)
+
+    # Расчёт
+    grain_info = grain_types[grain_key]
+    price_per_ton = grain_info['price']
+    total = weight * price_per_ton
+    discount_applied = False
+    discount_amount = 0
+
+    # Скидка 10%, если вес > 10 тонн
+    if weight > 10:
+        discount_applied = True
+        discount_amount = total * 0.10
+        total -= discount_amount
+
+    return render_template(
+        'lab4/grain.html',
+        grain_types=grain_types,
+        success=True,
+        grain_name=grain_info['name'],
+        weight=weight,
+        total=total,
+        discount_applied=discount_applied,
+        discount_amount=discount_amount
+    )
