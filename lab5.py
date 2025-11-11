@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, session
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from werkzeug.security import check_password_hash, generate_password_hash
 lab5 = Blueprint('lab5', __name__)
 
 @lab5.route('/lab5/')
@@ -10,9 +11,9 @@ def lab():
 def db_connect():
     conn = psycopg2.connect(
         host='127.0.0.1',
-        database='kb',
-        user='ivan_ivanov_knowledge_base',
-        password='123'
+        database='varya_aleshkina_knowledge_base',
+        user='varya_aleshkina_knowledge_base',
+        password='333'
     )
     cur = conn.cursor(cursor_factory=RealDictCursor)
     return conn, cur
@@ -36,15 +37,17 @@ def register():
     try:
         conn, cur = db_connect()
 
-        # Проверяем, существует ли пользователь с таким логином (исправлено)
+        # Проверяем, существует ли пользователь с таким логином
         cur.execute("SELECT login FROM users WHERE login = %s;", (login,))
 
         if cur.fetchone():
             db_close(conn, cur)
             return render_template('lab5/register.html', error="Такой пользователь уже существует")
 
-        # Добавляем нового пользователя (исправлено)
-        cur.execute("INSERT INTO users (login, password) VALUES (%s, %s);", (login, password))
+        # ИСПРАВЛЕНИЕ: убраны фигурные скобки и кавычки
+        password_hash = generate_password_hash(password)
+        cur.execute("INSERT INTO users (login, password) VALUES (%s, %s);", (login, password_hash))
+        conn.commit()  # Добавьте commit перед закрытием
         db_close(conn, cur)
         return render_template('lab5/success.html', login=login)
     
@@ -59,7 +62,7 @@ def login():
         return render_template('lab5/login.html')
 
     login = request.form.get('login')
-    password = request.form.get('password')
+    password = request.form.g('password')
 
     if not login or not password:
         return render_template('lab5/register.html', error='Заполните все поля')
@@ -73,7 +76,7 @@ def login():
         db_close(conn, cur)
         return render_template('lab5/login.html', error='Логин и/или пароль неверны')
 
-    if user['password'] != password:
+    if not check_password_hash(user['password'],password):
         db_close(conn, cur)
         return render_template('lab5/login.html', error='Логин и/или пароль неверны')
 
