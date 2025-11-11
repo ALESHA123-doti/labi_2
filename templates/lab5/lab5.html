@@ -4,7 +4,7 @@
 
 {% block main %}
     <h1>Flask и БД</h1>
-    <div>Пользователь: <strong>anonymous</strong></div>
+    <div>Пользователь: <strong>{{ login if login else 'anonymous' }}</strong></div>
     <div>Тема лабораторной - Flask и БД. Список сделанных страниц:</div>
     <ol>
         <li><a href="/lab5/login">Вход</a></li>
