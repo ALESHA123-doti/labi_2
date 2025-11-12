@@ -13,30 +13,16 @@ def lab():
 
 def db_connect():
     try:
-        if current_app.config['DB_TYPE'] == 'postgres':
-            conn = psycopg2.connect(
-                host='127.0.0.1',
-                database='varya_aleshkina_knowledge_base',
-                user='varya_aleshkina_knowledge_base',
-                password='333'
-            )
-            cur = conn.cursor(cursor_factory=RealDictCursor)
-        else:
-            # Используем SQLite как fallback
-            dir_path = path.dirname(path.realpath(__file__))
-            db_path = path.join(dir_path, "database.db")
-            conn = sqlite3.connect(db_path)
-            conn.row_factory = sqlite3.Row
-            cur = conn.cursor()
-    except psycopg2.OperationalError:
-        # Если PostgreSQL недоступен, автоматически используем SQLite
+        # На PythonAnywhere используем только SQLite
         dir_path = path.dirname(path.realpath(__file__))
         db_path = path.join(dir_path, "database.db")
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-    
-    return conn, cur
+        return conn, cur
+    except Exception as e:
+        print(f"Ошибка подключения к БД: {e}")
+        raise
 
 def db_close(conn, cur):
     conn.commit()
@@ -58,26 +44,19 @@ def register():
         conn, cur = db_connect()
 
         # Проверяем, существует ли пользователь с таким логином
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT login FROM users WHERE login = %s;", (login,))
-        else:
-            cur.execute("SELECT login FROM users WHERE login = ?;", (login,))
+        cur.execute("SELECT login FROM users WHERE login = ?;", (login,))
 
         if cur.fetchone():
             db_close(conn, cur)
             return render_template('lab5/register.html', error="Такой пользователь уже существует")
 
         password_hash = generate_password_hash(password)
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("INSERT INTO users (login, password) VALUES (%s, %s);", (login, password_hash))
-        else:
-            cur.execute("INSERT INTO users (login, password) VALUES (?, ?);", (login, password_hash))
+        cur.execute("INSERT INTO users (login, password) VALUES (?, ?);", (login, password_hash))
         
         db_close(conn, cur)
         return render_template('lab5/success.html', login=login)
     
     except Exception as e:
-        # Выведем ошибку для отладки
         print(f"Ошибка базы данных: {e}")
         return render_template('lab5/register.html', error=f"Ошибка базы данных: {e}")
 
@@ -95,11 +74,7 @@ def login():
     try:
         conn, cur = db_connect()
 
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT * FROM users WHERE login = %s;", (login,))
-        else:
-            cur.execute("SELECT * FROM users WHERE login = ?;", (login,))
-            
+        cur.execute("SELECT * FROM users WHERE login = ?;", (login,))
         user = cur.fetchone()
 
         if not user:
@@ -137,11 +112,7 @@ def create():
         conn, cur = db_connect()
 
         # Получаем ID пользователя
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT id FROM users WHERE login = %s;", (login,))
-        else:
-            cur.execute("SELECT id FROM users WHERE login = ?;", (login,))
-        
+        cur.execute("SELECT id FROM users WHERE login = ?;", (login,))
         user = cur.fetchone()
         if not user:
             db_close(conn, cur)
@@ -150,12 +121,8 @@ def create():
         login_id = user["id"]
 
         # Вставляем статью
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("INSERT INTO articles (user_id, title, article_text) VALUES (%s, %s, %s);", 
-                       (login_id, title, article_text))
-        else:
-            cur.execute("INSERT INTO articles (user_id, title, article_text) VALUES (?, ?, ?);", 
-                       (login_id, title, article_text))
+        cur.execute("INSERT INTO articles (user_id, title, article_text) VALUES (?, ?, ?);", 
+                   (login_id, title, article_text))
 
         db_close(conn, cur)
         return redirect('/lab5')
@@ -174,11 +141,7 @@ def list_articles():
         conn, cur = db_connect()
 
         # Получаем ID пользователя
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT id FROM users WHERE login = %s;", (login,))
-        else: 
-            cur.execute("SELECT id FROM users WHERE login = ?;", (login,))
-        
+        cur.execute("SELECT id FROM users WHERE login = ?;", (login,))
         user = cur.fetchone()
         if not user:
             db_close(conn, cur)
@@ -187,11 +150,7 @@ def list_articles():
         login_id = user["id"]
 
         # Получаем статьи пользователя
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT * FROM articles WHERE user_id = %s;", (login_id,))
-        else:
-            cur.execute("SELECT * FROM articles WHERE user_id = ?;", (login_id,))
-        
+        cur.execute("SELECT * FROM articles WHERE user_id = ?;", (login_id,))
         articles = cur.fetchall()
 
         db_close(conn, cur)
