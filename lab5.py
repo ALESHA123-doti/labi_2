@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, current_app
+from flask import Blueprint, render_template, request, session, redirect, current_app, url_for, flash
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -48,7 +48,7 @@ def register():
     try:
         conn, cur = db_connect()
 
-        # Проверяем, существует ли пользователь с таким логином
+        
         if current_app.config['DB_TYPE'] == 'postgres':
             cur.execute("SELECT login FROM users WHERE login = %s;", (login,))
         else:
@@ -101,12 +101,18 @@ def login():
             return render_template('lab5/login.html', error='Логин и/или пароль неверны')
 
         session['login'] = login
+        session['user_id'] = user['id']
         db_close(conn, cur)
-        return render_template('lab5/success_login.html', login=login)
+        return redirect('/lab5')
     
     except Exception as e:
         print(f"Ошибка при входе: {e}")
         return render_template('lab5/login.html', error='Ошибка сервера')
+
+@lab5.route('/lab5/logout')
+def logout():
+    session.clear()
+    return redirect('/lab5')
 
 @lab5.route('/lab5/create', methods=['GET', 'POST'])
 def create():
@@ -120,35 +126,25 @@ def create():
     title = request.form.get('title')
     article_text = request.form.get('article_text')
 
+    # Валидация
     if not title or not article_text:
         return render_template('lab5/create_article.html', error='Заполните все поля')
+    
+    if len(title.strip()) == 0 or len(article_text.strip()) == 0:
+        return render_template('lab5/create_article.html', error='Тема и текст не могут быть пустыми')
 
     try:
         conn, cur = db_connect()
 
-        # Получаем ID пользователя
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT id FROM users WHERE login = %s;", (login,))
-        else:
-            cur.execute("SELECT id FROM users WHERE login = ?;", (login,))
-        
-        user = cur.fetchone()
-        if not user:
-            db_close(conn, cur)
-            return render_template('lab5/create_article.html', error='Пользователь не найден')
-
-        login_id = user["id"]
-
-        # Вставляем статью
         if current_app.config['DB_TYPE'] == 'postgres':
             cur.execute("INSERT INTO articles (user_id, title, article_text) VALUES (%s, %s, %s);", 
-                       (login_id, title, article_text))
+                       (session['user_id'], title, article_text))
         else:
             cur.execute("INSERT INTO articles (user_id, title, article_text) VALUES (?, ?, ?);", 
-                       (login_id, title, article_text))
+                       (session['user_id'], title, article_text))
 
         db_close(conn, cur)
-        return redirect('/lab5')
+        return redirect('/lab5/list')
     
     except Exception as e:
         print(f"Ошибка при создании статьи: {e}")
@@ -163,24 +159,11 @@ def list_articles():
     try:
         conn, cur = db_connect()
 
-        # Получаем ID пользователя
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT id FROM users WHERE login = %s;", (login,))
-        else: 
-            cur.execute("SELECT id FROM users WHERE login = ?;", (login,))
         
-        user = cur.fetchone()
-        if not user:
-            db_close(conn, cur)
-            return redirect('/lab5/login')
-
-        login_id = user["id"]
-
-        # Получаем статьи пользователя
         if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT * FROM articles WHERE user_id = %s;", (login_id,))
+            cur.execute("SELECT * FROM articles WHERE user_id = %s ORDER BY id DESC;", (session['user_id'],))
         else:
-            cur.execute("SELECT * FROM articles WHERE user_id = ?;", (login_id,))
+            cur.execute("SELECT * FROM articles WHERE user_id = ? ORDER BY id DESC;", (session['user_id'],))
         
         articles = cur.fetchall()
 
@@ -190,3 +173,86 @@ def list_articles():
     except Exception as e:
         print(f"Ошибка при получении статей: {e}")
         return render_template('lab5/articles.html', articles=[], login=login)
+
+@lab5.route('/lab5/edit/<int:article_id>', methods=['GET', 'POST'])
+def edit_article(article_id):
+    login = session.get('login')
+    if not login:
+        return redirect('/lab5/login')
+    
+    try:
+        conn, cur = db_connect()
+
+        # Проверяем принадлежность статьи пользователю
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("SELECT * FROM articles WHERE id = %s AND user_id = %s;", (article_id, session['user_id']))
+        else:
+            cur.execute("SELECT * FROM articles WHERE id = ? AND user_id = ?;", (article_id, session['user_id']))
+        
+        article = cur.fetchone()
+        
+        if not article:
+            db_close(conn, cur)
+            return redirect('/lab5/list')
+
+        if request.method == 'GET':
+            db_close(conn, cur)
+            return render_template('lab5/edit_article.html', article=article)
+        
+        # POST запрос - обновление статьи
+        title = request.form.get('title')
+        article_text = request.form.get('article_text')
+
+        # Валидация
+        if not title or not article_text:
+            return render_template('lab5/edit_article.html', article=article, error='Заполните все поля')
+        
+        if len(title.strip()) == 0 or len(article_text.strip()) == 0:
+            return render_template('lab5/edit_article.html', article=article, error='Тема и текст не могут быть пустыми')
+
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("UPDATE articles SET title = %s, article_text = %s WHERE id = %s;", 
+                       (title, article_text, article_id))
+        else:
+            cur.execute("UPDATE articles SET title = ?, article_text = ? WHERE id = ?;", 
+                       (title, article_text, article_id))
+
+        db_close(conn, cur)
+        return redirect('/lab5/list')
+    
+    except Exception as e:
+        print(f"Ошибка при редактировании статьи: {e}")
+        return render_template('lab5/edit_article.html', article=article, error='Ошибка при редактировании статьи')
+
+@lab5.route('/lab5/delete/<int:article_id>')
+def delete_article(article_id):
+    login = session.get('login')
+    if not login:
+        return redirect('/lab5/login')
+    
+    try:
+        conn, cur = db_connect()
+
+        # Проверяем принадлежность статьи пользователю
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("SELECT * FROM articles WHERE id = %s AND user_id = %s;", (article_id, session['user_id']))
+        else:
+            cur.execute("SELECT * FROM articles WHERE id = ? AND user_id = ?;", (article_id, session['user_id']))
+        
+        article = cur.fetchone()
+        
+        if not article:
+            db_close(conn, cur)
+            return redirect('/lab5/list')
+
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("DELETE FROM articles WHERE id = %s;", (article_id,))
+        else:
+            cur.execute("DELETE FROM articles WHERE id = ?;", (article_id,))
+
+        db_close(conn, cur)
+        return redirect('/lab5/list')
+    
+    except Exception as e:
+        print(f"Ошибка при удалении статьи: {e}")
+        return redirect('/lab5/list')
