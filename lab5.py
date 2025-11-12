@@ -44,7 +44,6 @@ def register():
             db_close(conn, cur)
             return render_template('lab5/register.html', error="Такой пользователь уже существует")
 
-        # ИСПРАВЛЕНИЕ: убраны фигурные скобки и кавычки
         password_hash = generate_password_hash(password)
         cur.execute("INSERT INTO users (login, password) VALUES (%s, %s);", (login, password_hash))
         conn.commit()  # Добавьте commit перед закрытием
@@ -69,7 +68,7 @@ def login():
 
     conn, cur = db_connect()
 
-    cur.execute(f"SELECT * FROM users WHERE login='{login}';")
+    cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
     user = cur.fetchone()
 
     if not user:
@@ -115,10 +114,10 @@ def list():
         
     conn, cur = db_connect()
 
-    cur.execute(f"SELECT id FROM users WHERE login='{login}';")
+    cur.execute(f"SELECT id FROM users WHERE login=%s;", (login, ))
     login_id = cur.fetchone()["id"]
 
-    cur.execute(f"SELECT * FROM articles WHERE user_id='{login_id}';")
+    cur.execute(f"SELECT * FROM articles WHERE user_id=%s;", (login, ))
     articles = cur.fetchall()
 
     db_close(conn, cur)
