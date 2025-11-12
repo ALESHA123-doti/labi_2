@@ -48,14 +48,20 @@ def register():
         conn, cur = db_connect()
 
         # Проверяем, существует ли пользователь с таким логином
-        cur.execute("SELECT login FROM users WHERE login = %s;", (login,))
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("SELECT login FROM users WHERE login = %s;", (login,))
+        else:
+            cur.execute("SELECT login FROM users WHERE login=?;", (login,))
 
         if cur.fetchone():
             db_close(conn, cur)
             return render_template('lab5/register.html', error="Такой пользователь уже существует")
 
         password_hash = generate_password_hash(password)
-        cur.execute("INSERT INTO users (login, password) VALUES (%s, %s);", (login, password_hash))
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("INSERT INTO users (login, password) VALUES (%s, %s);", (login, password_hash))
+        else:
+            cur.execute("INSERT INTO users (login, password) VALUES (?, ?);", (login, password_hash))
         conn.commit()  # Добавьте commit перед закрытием
         db_close(conn, cur)
         return render_template('lab5/success.html', login=login)
@@ -78,7 +84,10 @@ def login():
 
     conn, cur = db_connect()
 
-    cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
+    else:
+        cur.execute("SELECT * FROM users WHERE login=?;", (login, ))
     user = cur.fetchone()
 
     if not user:
@@ -107,7 +116,11 @@ def create():
 
     conn, cur = db_connect()
 
-    cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
+    else:
+        cur.execute("SELECT * FROM users WHERE login=?;", (login, ))
+
     login_id = cur.fetchone()["id"]
 
     cur.execute(f"INSERT INTO articles(user_id, title, article_text) \
@@ -124,10 +137,16 @@ def list():
         
     conn, cur = db_connect()
 
-    cur.execute(f"SELECT id FROM users WHERE login=%s;", (login, ))
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT id FROM users WHERE login=%s;", (login, ))
+    else: 
+        cur.execute("SELECT id FROM users WHERE login=?;", (login, ))
     login_id = cur.fetchone()["id"]
 
-    cur.execute(f"SELECT * FROM articles WHERE user_id=%s;", (login, ))
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT * FROM articles WHERE user_id=%s;", (login, ))
+    else:
+        cur.execute("SELECT * FROM articles WHERE user_id=?;", (login, ))
     articles = cur.fetchall()
 
     db_close(conn, cur)
