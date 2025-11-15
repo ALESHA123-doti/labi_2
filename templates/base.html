@@ -13,6 +13,12 @@
             font-size: {{ request.cookies.get('font_size', '16') }}px;
             font-style: {{ request.cookies.get('font_style', 'normal') }};
         }
+        #office-list li {
+            margin-bottom: 8px;
+        }
+        #office-list button {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -28,5 +34,9 @@
     <footer>
         &copy; Алёшкина Варя, ФБИ-34, 3 курс, 2025
     </footer>
+
+    <script>
+        {% block script %}{% endblock %}
+    </script>
 </body>
 </html>
