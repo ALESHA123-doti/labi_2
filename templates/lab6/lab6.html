@@ -40,7 +40,7 @@ async function loadOffices() {
             bookButton.textContent = 'Забронировать';
             bookButton.onclick = () => bookOffice(office.number);
             li.appendChild(bookButton);
-        } else if (office.tenant === '{{ session.get("login", "") }}') { // ИСПРАВЛЕНО
+        } else if (office.tenant === '{{ session.get("login", "") }}') {
             const cancelButton = document.createElement('button');
             cancelButton.textContent = 'Освободить';
             cancelButton.onclick = () => cancelOffice(office.number);

@@ -59,6 +59,7 @@ def api():
         return jsonify({"jsonrpc": "2.0", "result": "success", "id": data.get('id')})
 
     elif method == 'cancellation':
+        # Проверка на авторизацию
         if 'login' not in session:
             return jsonify({
                 "jsonrpc": "2.0",
@@ -66,6 +67,7 @@ def api():
                 "id": data.get('id')
             })
 
+        # Проверка на корректность параметра
         if not isinstance(params, int):
             return jsonify({
                 "jsonrpc": "2.0",
@@ -79,16 +81,21 @@ def api():
         for office in offices:
             if office["number"] == office_num:
                 office_found = True
-                if office["tenant"] != session['login']:
-                    if office["tenant"] == "":
-                        error_message = "Кабинет не забронирован"
-                    else:
-                        error_message = "Кабинет забронирован другим пользователем"
+                # Проверка, что кабинет арендован
+                if office["tenant"] == "":
                     return jsonify({
                         "jsonrpc": "2.0",
-                        "error": {"code": 3, "message": error_message},
+                        "error": {"code": 3, "message": "Кабинет не забронирован"},
                         "id": data.get('id')
                     })
+                # Проверка, что кабинет арендован текущим пользователем
+                if office["tenant"] != session['login']:
+                    return jsonify({
+                        "jsonrpc": "2.0",
+                        "error": {"code": 3, "message": "Кабинет забронирован другим пользователем"},
+                        "id": data.get('id')
+                    })
+                # Освобождаем кабинет
                 office["tenant"] = ""
                 break
 
