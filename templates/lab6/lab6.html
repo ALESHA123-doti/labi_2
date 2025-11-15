@@ -6,6 +6,7 @@
 <h1>Список кабинетов</h1>
 <ul id="office-list">
 </ul>
+<p id="total-price">Общая стоимость арендованных офисов: <span id="total-amount">0</span> руб.</p>
 {% endblock %}
 
 {% block script %}
@@ -33,7 +34,8 @@ async function loadOffices() {
 
     data.result.forEach(office => {
         const li = document.createElement('li');
-        li.textContent = `Кабинет №${office.number}: ${office.tenant || 'Свободен'}`;
+        // Изменено: добавлена стоимость
+        li.textContent = `Кабинет №${office.number}: ${office.tenant || 'Свободен'} (Цена: ${office.price} руб.)`;
         
         if (!office.tenant) {
             const bookButton = document.createElement('button');
@@ -49,6 +51,19 @@ async function loadOffices() {
         
         officeList.appendChild(li);
     });
+
+    // Вычисляем и отображаем общую стоимость
+    calculateTotalPrice(data.result);
+}
+
+function calculateTotalPrice(offices) {
+    let total = 0;
+    offices.forEach(office => {
+        if (office.tenant) { // Если офис арендован
+            total += office.price; // Прибавляем его стоимость
+        }
+    });
+    document.getElementById('total-amount').textContent = total;
 }
 
 async function bookOffice(number) {
