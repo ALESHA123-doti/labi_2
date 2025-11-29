@@ -71,3 +71,26 @@ def edit_film(id):
         'description': film_data['description']
     }
     return jsonify(films[id]), 200
+
+@lab7.route('/lab7/rest-api/films/', methods=['POST'])
+def add_film():
+    # Получаем данные из тела запроса
+    film_data = request.get_json()
+    # Проверяем, что JSON был передан и это словарь
+    if not isinstance(film_data, dict):
+        return jsonify({'error': 'Invalid JSON data'}), 400
+    # Обязательные поля (по заданию — все 4)
+    required_fields = ['title', 'title_ru', 'year', 'description']
+    for field in required_fields:
+        if field not in film_data:
+            return jsonify({'error': f'Missing required field: {field}'}), 400
+    # Добавляем новый фильм в конец списка
+    films.append({
+        'title': film_data['title'],
+        'title_ru': film_data['title_ru'],
+        'year': film_data['year'],
+        'description': film_data['description']
+    })
+    # Возвращаем ID нового фильма (индекс в списке)
+    new_id = len(films) - 1
+    return jsonify({'id': new_id}), 201
