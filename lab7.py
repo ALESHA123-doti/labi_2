@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 
 lab7 = Blueprint('lab7', __name__)
 
@@ -47,4 +47,27 @@ def get_film(id):
 def del_film(id):
     del films[id]
     return '', 204
-  
+
+@lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
+def edit_film(id):
+    # Проверяем, что id находится в допустимом диапазоне
+    if id < 0 or id >= len(films):
+        return jsonify({'error': 'Film not found'}), 404
+    # Получаем данные из тела запроса
+    film_data = request.get_json()
+    # Проверяем, что JSON был передан и это словарь
+    if not isinstance(film_data, dict):
+        return jsonify({'error': 'Invalid JSON data'}), 400
+    # Обязательные поля (по заданию — все 4)
+    required_fields = ['title', 'title_ru', 'year', 'description']
+    for field in required_fields:
+        if field not in film_data:
+            return jsonify({'error': f'Missing required field: {field}'}), 400
+    # Обновляем фильм
+    films[id] = {
+        'title': film_data['title'],
+        'title_ru': film_data['title_ru'],
+        'year': film_data['year'],
+        'description': film_data['description']
+    }
+    return jsonify(films[id]), 200
