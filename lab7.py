@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request
+from datetime import datetime
 
 lab7 = Blueprint('lab7', __name__)
 
@@ -28,43 +29,74 @@ films = [
 def main():
     return render_template('lab7/index.html')
 
-# Получение всех фильмов
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
     return jsonify(films)
 
-# Получение фильма по ID
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_film(id):
     if id < 0 or id >= len(films):
-        return {"error": "Фильм не найден"}, 404
+        return jsonify({"error": "Фильм не найден"}), 404
     return jsonify(films[id])
 
-# Удаление фильма
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
 def del_film(id):
     if id < 0 or id >= len(films):
-        return {"error": "Фильм не найден"}, 404
+        return jsonify({"error": "Фильм не найден"}), 404
     del films[id]
     return '', 204
 
-# Редактирование фильма
+def _normalize_film_data(data):
+    """Вспомогательная функция: нормализует и валидирует данные фильма."""
+    if not isinstance(data, dict):
+        return None, {"error": "Неверный формат данных"}
+
+    # Обязательные поля
+    title_ru = data.get('title_ru', '').strip()
+    description = data.get('description', '').strip()
+
+    if not title_ru:
+        return None, {"title_ru": "Русское название обязательно"}
+    if not description:
+        return None, {"description": "Заполните описание"}
+
+    # Опциональное: оригинальное название
+    title = data.get('title', '').strip()
+    if not title:
+        title = title_ru  # ← основная логика задания
+
+    # Год
+    try:
+        year = int(data.get('year', 0))
+    except (TypeError, ValueError):
+        return None, {"year": "Год должен быть числом"}
+
+    return {
+        "title": title,
+        "title_ru": title_ru,
+        "year": year,
+        "description": description
+    }, None
+
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
 def put_film(id):
     if id < 0 or id >= len(films):
-        return {"error": "Фильм не найден"}, 404
+        return jsonify({"error": "Фильм не найден"}), 404
+
     film_data = request.get_json()
-    if not film_data.get('description') or film_data['description'].strip() == '':
-        return {"description": "Заполните описание"}, 400
-    films[id] = film_data
+    normalized, error = _normalize_film_data(film_data)
+    if error:
+        return jsonify(error), 400
+
+    films[id] = normalized
     return jsonify(films[id])
 
-# Добавление нового фильма
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
     film_data = request.get_json()
-    if not film_data.get('description') or film_data['description'].strip() == '':
-        return {"description": "Заполните описание"}, 400
-    films.append(film_data)
-    return jsonify(len(films) - 1)
+    normalized, error = _normalize_film_data(film_data)
+    if error:
+        return jsonify(error), 400
 
+    films.append(normalized)
+    return jsonify(len(films) - 1)
