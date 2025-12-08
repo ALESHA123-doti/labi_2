@@ -20,6 +20,7 @@
             margin-left: 10px;
         }
     </style>
+    {% block head %}{% endblock %}
 </head>
 <body>
     <header>
@@ -35,8 +36,6 @@
         &copy; Алёшкина Варя, ФБИ-34, 3 курс, 2025
     </footer>
 
-    <script>
-        {% block script %}{% endblock %}
-    </script>
+    {% block script %}{% endblock %}
 </body>
 </html>

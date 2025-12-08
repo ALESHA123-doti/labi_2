@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, jsonify, request
 
 lab7 = Blueprint('lab7', __name__)
 
-# Исходный список фильмов
+# Список фильмов
 films = [
     {
         "title": "Five Nights at Freddy's 2",
@@ -24,43 +24,47 @@ films = [
     }
 ]
 
-# Главная страница
 @lab7.route('/lab7/')
 def main():
     return render_template('lab7/index.html')
 
-# Получить все фильмы
+# Получение всех фильмов
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
     return jsonify(films)
 
-# Получить один фильм по ID
+# Получение фильма по ID
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_film(id):
-    if 0 <= id < len(films):
-        return jsonify(films[id])
-    return jsonify({"error": "Фильм не найден"}), 404
+    if id < 0 or id >= len(films):
+        return {"error": "Фильм не найден"}, 404
+    return jsonify(films[id])
 
-# Удалить фильм по ID
+# Удаление фильма
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
 def del_film(id):
-    if 0 <= id < len(films):
-        del films[id]
-        return '', 204
-    return jsonify({"error": "Фильм не найден"}), 404
+    if id < 0 or id >= len(films):
+        return {"error": "Фильм не найден"}, 404
+    del films[id]
+    return '', 204
 
-# Изменить фильм по ID (PUT)
+# Редактирование фильма
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
 def put_film(id):
-    if 0 <= id < len(films):
-        film = request.get_json()
-        films[id] = film
-        return jsonify(films[id])
-    return jsonify({"error": "Фильм не найден"}), 404
+    if id < 0 or id >= len(films):
+        return {"error": "Фильм не найден"}, 404
+    film_data = request.get_json()
+    if not film_data.get('description') or film_data['description'].strip() == '':
+        return {"description": "Заполните описание"}, 400
+    films[id] = film_data
+    return jsonify(films[id])
 
-# Добавить новый фильм (POST)
+# Добавление нового фильма
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
-    film = request.get_json()
-    films.append(film)
-    return jsonify({"id": len(films) - 1})
+    film_data = request.get_json()
+    if not film_data.get('description') or film_data['description'].strip() == '':
+        return {"description": "Заполните описание"}, 400
+    films.append(film_data)
+    return jsonify(len(films) - 1)
+
