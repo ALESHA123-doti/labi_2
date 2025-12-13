@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, session
+from db import db
+from db.models import users, articles
 lab8 = Blueprint('lab8', __name__)
 
 @lab8.route('/lab8/')
