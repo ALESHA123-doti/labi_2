@@ -7,9 +7,9 @@
     <div>Пользователь: <strong>{{ login if login else 'anonymous' }}</strong></div>
     <div>Тема лабораторной — Flask и ORM. Список сделанных страниц:</div>
     <ol>
-        <li><a href="{{ url_for('lab8.login') }}">Вход</a></li>
-        <li><a href="{{ url_for('lab8.register') }}">Регистрация</a></li>
-        <li><a href="{{ url_for('lab8.articles') }}">Список статей</a></li>
-        <li><a href="{{ url_for('lab8.create') }}">Создать статью</a></li>
+        <li><a href="/lab8/login">Вход</a></li>
+        <li><a href="/lab8/register">Регистрация</a></li>
+        <li><a href="/lab8/list">Список статей</a></li>
+        <li><a href="/lab8/create">Создать статью</a></li>
     </ol>
 {% endblock %}
