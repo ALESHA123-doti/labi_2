@@ -5,6 +5,7 @@ from os import path
 from flask_sqlalchemy import SQLAlchemy
 from db import db
 from werkzeug.exceptions import HTTPException
+
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
