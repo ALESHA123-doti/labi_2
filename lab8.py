@@ -98,7 +98,7 @@ def create_article():
     )
     db.session.add(new_article)
     db.session.commit()
-    return redirect('/lab8/articles/')
+    return redirect('/lab8/list/')
 
 
 # РЕДАКТИРОВАНИЕ СТАТЬИ. Задание 5
@@ -119,7 +119,7 @@ def edit_article(article_id):
     article.title = title
     article.article_text = article_text
     db.session.commit()
-    return redirect('/lab8/articles/')
+    return redirect('/lab8/list/')
 
 
 # УДАЛЕНИЕ СТАТЬИ. Задание 6
@@ -129,4 +129,4 @@ def delete_article(article_id):
     article = articles.query.filter_by(id=article_id, login_id=current_user.id).first_or_404()
     db.session.delete(article)
     db.session.commit()
-    return redirect('/lab8/articles/')
+    return redirect('/lab8/list/')
