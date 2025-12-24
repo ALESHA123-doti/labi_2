@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block lab %}Создать статью{% endblock %}
+{% block main %}
+    <h1>Создать статью</h1>
+    {% if error %}
+        <div style="color: red;">{{ error }}</div>
+    {% endif %}
+    <form method="post">
+        <div>
+            <label>Заголовок:<br>
+                <input type="text" name="title" value="{{ request.form.title or '' }}" required>
+            </label>
+        </div><br>
+        <div>
+            <label>Текст:<br>
+                <textarea name="article_text" rows="10" required>{{ request.form.article_text or '' }}</textarea>
+            </label>
+        </div><br>
+        <button type="submit">Создать</button>
+    </form>
+    <p><a href="/lab8/list/">Назад к статьям</a></p>
+{% endblock %}

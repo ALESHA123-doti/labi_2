@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block lab %}Список статей{% endblock %}
+{% block main %}
+    <h1>Мои статьи</h1>
+    {% if articles %}
+        <ul>
+        {% for art in articles %}
+            <li>
+                <strong>{{ art.title }}</strong><br>
+                {{ art.article_text[:100] }}...
+                <br>
+                <a href="/lab8/edit/{{ art.id }}/">Редактировать</a>
+                <a href="/lab8/delete/{{ art.id }}/" style="color: red;" onclick="return confirm('Удалить?')">Удалить</a>
+            </li>
+            <hr>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>У вас пока нет статей.</p>
+    {% endif %}
+    <p><a href="/lab8/create/">Создать статью</a></p>
+    <p><a href="/lab8/">Назад</a></p>
+{% endblock %}
