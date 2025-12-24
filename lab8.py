@@ -1,4 +1,3 @@
-# lab8.py
 from flask import Blueprint, render_template, request, redirect, flash
 from db import db
 from db.models import users, articles
