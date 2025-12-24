@@ -26,15 +26,10 @@ if IS_ON_PYTHONANYWHERE:
     db_path = path.join(dir_path, "varya_aleshkina_orm.db")
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 else:
-    # Локально — PostgreSQL
-    db_name = 'varya_aleshkina_orm'
-    db_user = 'varya_aleshkina_orm'
-    db_password = '333'
-    host_ip = '127.0.0.1'
-    host_port = 5432
-    app.config['SQLALCHEMY_DATABASE_URI'] = (
-        f'postgresql://{db_user}:{db_password}@{host_ip}:{host_port}/{db_name}'
-    )
+    # Локально — тоже SQLite для простоты
+    dir_path = path.dirname(path.realpath(__file__))
+    db_path = path.join(dir_path, "varya_aleshkina_orm_local.db")
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 
 from db import db
 db.init_app(app)
