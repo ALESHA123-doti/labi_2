@@ -4,12 +4,11 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    min-height: 100vh;
+    min-height: 90vh;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     font-size: 18px;
-    position: relative;
 }
 
 /* Уменьшаем размер заголовков */
@@ -55,14 +54,11 @@ main {
 }
 
 footer {
-    color: #ffb6c1;
+    color: #ddc888;
     padding: 15px 25px;
     font-size: 18px;
-    position: fixed;
-    right: 20px;
-    bottom: 5px;
     text-align: right;
-    border-radius: 8px;
+    box-sizing: border-box;
 }
 
 sup {

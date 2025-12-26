@@ -1,9 +1,221 @@
 {% extends "base.html" %}
 
-{% block lab %}Лабораторная работа 9{% endblock %}
-
-{% block script %}{% endblock %}
+{% block lab %}<span style="color: #d4af37;">Лабораторная работа 9</span>{% endblock %}
 
 {% block main %}
-    <h1>Поздравления</h1>
+<div class="lab9-container">
+    <h1>Новогодние Подарки</h1>
+    <p class="subtitle">Выберите до 3 коробок, чтобы открыть подарки и получить поздравления</p>
+    
+    <div class="stats">
+        <div class="stat">
+            <span>Открыто:</span>
+            <strong id="opened-count">{{ opened_count }}</strong>
+            <span>/3</span>
+        </div>
+        <div class="stat">
+            <span>Осталось:</span>
+            <strong id="remaining-count">{{ remaining_count }}</strong>
+        </div>
+    </div>
+    
+    <div class="gifts-area" id="gifts-area">
+        {% for box in boxes_data %}
+        <div class="gift-box {% if box.is_opened %}opened{% endif %}" 
+             data-id="{{ box.id }}"
+             id="box-{{ box.id }}"
+             style="left: {{ box.x }}px; top: {{ box.y }}px;">
+            {% if not box.is_opened %}
+                <img src="{{ url_for('static', filename='lab9/' + box.image) }}" alt="Подарочная коробка">
+            {% else %}
+                <img src="{{ url_for('static', filename='lab9/' + gifts[box.id]) }}" alt="Подарок">
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div id="message" class="message"></div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const giftsArea = document.getElementById('gifts-area');
+    const messageDiv = document.getElementById('message');
+    const openedCountSpan = document.getElementById('opened-count');
+    const remainingCountSpan = document.getElementById('remaining-count');
+
+    giftsArea.addEventListener('click', function (e) {
+        const giftBox = e.target.closest('.gift-box');
+        if (!giftBox || giftBox.classList.contains('opened')) return;
+
+        const boxId = parseInt(giftBox.dataset.id);
+        giftBox.style.transform = 'scale(0.95)';
+
+        fetch('/lab9/open_box', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ box_id: boxId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                giftBox.classList.add('opened');
+                giftBox.innerHTML = `<img src="/static/lab9/${data.gift_image}" alt="Подарок">`;
+                showMessage(data.congratulation, 'success');
+                openedCountSpan.textContent = data.opened_count;
+                remainingCountSpan.textContent = 10 - data.opened_count;
+            } else {
+                showMessage(data.message, 'error');
+            }
+            giftBox.style.transform = 'scale(1)';
+        })
+        .catch(err => {
+            console.error('Fetch error:', err);
+            showMessage('Ошибка при открытии коробки', 'error');
+            giftBox.style.transform = 'scale(1)';
+        });
+    });
+
+    function showMessage(text, type) {
+        messageDiv.textContent = text;
+        messageDiv.className = 'message ' + type;
+        messageDiv.style.opacity = '1';
+        setTimeout(() => {
+            messageDiv.style.opacity = '0';
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = 'message';
+            }, 300);
+        }, 4000);
+    }
+});
+</script>
+
+<style>
+
+.lab9-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    padding-bottom: 80px; 
+}
+
+h1 {
+    text-align: center;
+    color: #d4af37;
+    margin: 0 0 10px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    font-size: 2.2rem;
+}
+
+.subtitle {
+    text-align: center;
+    color: #555;
+    margin: 0 0 20px;
+    font-size: 1.1rem;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: #f9f9f9;
+    padding: 15px 30px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 120px;
+    border: 1px solid #eee;
+}
+
+.stat span {
+    display: block;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.stat strong {
+    font-size: 24px;
+    color: #d4af37;
+}
+
+.gifts-area {
+    position: relative;
+    height: 600px;
+    background: white;
+    border-radius: 12px;
+    border: 2px dashed #d4af37;
+    overflow: visible;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.gift-box {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.gift-box:hover:not(.opened) {
+    transform: scale(1.2);
+    z-index: 20;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.gift-box.opened {
+    cursor: default;
+    opacity: 0.9;
+    transform: none !important;
+}
+
+.gift-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 1000;
+    text-align: center;
+    min-width: 300px;
+    max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: white;
+}
+
+.message.success {
+    background: #4CAF50;
+    border-left: 5px solid #2e7d32;
+}
+
+.message.error {
+    background: #f44336;
+    border-left: 5px solid #c62828;
+}
+
+</style>
 {% endblock %}
